@@ -1,27 +1,46 @@
-﻿const int GridMax = 25;
-var grid = new bool[GridMax][];
-var next = new bool[GridMax][];
+﻿const int GridMaxHeight = 25;
+const int GridMaxWidth = 50;
+var grid = new bool[GridMaxHeight][];
+var next = new bool[GridMaxHeight][];
 
-var rand = new Random();
-for (int i = 0; i < grid.Length; i++)
-{
-    grid[i] = new bool[GridMax];
-    next[i] = new bool[GridMax];
-}
 
 for (int i = 0; i < grid.Length; i++)
 {
-    for(int j = 0; j < grid[i].Length; j++)
-    {
-        grid[i][j] = rand.Next() % 2 == 0;
-    }
+    grid[i] = new bool[GridMaxWidth];
+    next[i] = new bool[GridMaxWidth];
 }
 
-var frames = 1000;
+InitializeRandomGrid(grid);
+
+var frames = 100;
 
 while (frames >= 0)
 {
     Console.Clear();
+    
+    PrintGrid(grid);
+
+    Thread.Sleep(250);
+
+    grid = CalculateNext(grid);
+
+    frames--;
+}
+
+void InitializeRandomGrid(bool[][] grid)
+{
+    var rand = new Random();
+    for (int i = 0; i < grid.Length; i++)
+    {
+        for (int j = 0; j < grid[i].Length; j++)
+        {
+            grid[i][j] = rand.Next() % 5 == 0;
+        }
+    }
+}
+
+void PrintGrid(bool[][] grid)
+{
     for (int i = 0; i < grid.Length; i++)
     {
         for (int j = 0; j < grid[i].Length; j++)
@@ -37,22 +56,25 @@ while (frames >= 0)
         }
         Console.WriteLine();
     }
+}
 
-    Thread.Sleep(500);
-
-    for (int i = 0; i < next.Length; i++)
+static bool[][] CalculateNext(bool[][] grid)
+{
+    var maxWidth = grid[0].Length;
+    var maxHeight = grid.Length;
+    var next = (bool[][])grid.Clone();
+    for (int i = 0; i < maxHeight; i++)
     {
-        for (int j = 0; j < next[i].Length; j++)
+        for (int j = 0; j < maxWidth; j++)
         {
-            var startX = j - 1 > -1 ? j - 1 : GridMax - 1;
-            //var startY = i - 1 > -1 ? i - 1 : GridMax - 1;
-            var x = j-1 > -1 ? j-1 : GridMax -1;
-            var y = i-1 > -1 ? i-1 : GridMax -1;
+            var startX = j - 1 > -1 ? j - 1 : maxWidth - 1;
+            var x = startX;
+            var y = i - 1 > -1 ? i - 1 : maxHeight - 1;
             var count = 0;
 
             for (int k = 1; k < 9; k++)
             {
-                if (x == j && y == i)
+                if (x == j && y == i) //k == 5
                 {
                     //skip
                 }
@@ -62,7 +84,7 @@ while (frames >= 0)
                 }
 
                 x++;
-                if (x == GridMax)
+                if (x == maxWidth)
                 {
                     x = 0;
                 }
@@ -72,7 +94,7 @@ while (frames >= 0)
                     x = startX;
                     y++;
                 }
-                if (y == GridMax)
+                if (y == maxHeight)
                 {
                     y = 0;
                 }
@@ -96,7 +118,6 @@ while (frames >= 0)
             }
         }
     }
-    grid = next;
 
-    frames--;
+    return next;
 }
