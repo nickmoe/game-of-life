@@ -1,4 +1,4 @@
-﻿const int GridMax = 10;
+﻿const int GridMax = 25;
 var grid = new bool[GridMax][];
 var next = new bool[GridMax][];
 
@@ -37,27 +37,44 @@ while (frames >= 0)
         }
         Console.WriteLine();
     }
+
     Thread.Sleep(500);
 
     for (int i = 0; i < next.Length; i++)
     {
         for (int j = 0; j < next[i].Length; j++)
         {
-            var x = -1;
-            var y = -1;
+            var startX = j - 1 > -1 ? j - 1 : GridMax - 1;
+            //var startY = i - 1 > -1 ? i - 1 : GridMax - 1;
+            var x = j-1 > -1 ? j-1 : GridMax -1;
+            var y = i-1 > -1 ? i-1 : GridMax -1;
             var count = 0;
 
             for (int k = 1; k < 9; k++)
             {
-                if (i + y > -1 && i + y < GridMax && j + x > -1 && j + x < GridMax && grid[i + y][j + x])
+                if (x == j && y == i)
+                {
+                    //skip
+                }
+                else if (grid[y][x])
                 {
                     count++;
                 }
 
+                x++;
+                if (x == GridMax)
+                {
+                    x = 0;
+                }
+
                 if (k % 3 == 0)
                 {
-                    x = -1;
+                    x = startX;
                     y++;
+                }
+                if (y == GridMax)
+                {
+                    y = 0;
                 }
             }
 
